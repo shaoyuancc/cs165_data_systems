@@ -36,25 +36,25 @@ int allocate(hashtable **ht, int size)
     if (*ht || size < 1)
     {
         return -1;
-    };
+    }
 
     *ht = (hashtable *)malloc(sizeof(hashtable));
     if (!*ht)
     {
         return -1;
-    };
+    }
 
     (*ht)->array = malloc(sizeof(node *) * size);
     if (!(*ht)->array)
     {
         free(*ht);
         return -1;
-    };
+    }
 
     for (int i = 0; i < size; i++)
     {
         (*ht)->array[i] = NULL;
-    };
+    }
 
     (*ht)->size = size;
 
@@ -112,7 +112,6 @@ int get(hashtable *ht, keyType key, valType *values, int num_values, int *num_re
     printf("get slot %d\n", slot);
     *num_results = 0;
     node *current_node = ht->array[slot];
-    printf("num results: %d, current node: %p, current node key: %d, val: %d, next: %p\n", *num_results, current_node, current_node->key, current_node->val, current_node->next);
     while (current_node)
     {
         printf("num results: %d, current node key: %d, val: %d, next: %p\n", *num_results, current_node->key, current_node->val, current_node->next);
@@ -137,8 +136,31 @@ int get(hashtable *ht, keyType key, valType *values, int num_values, int *num_re
 // It returns an error code, 0 for success and -1 otherwise (e.g., if the hashtable is not allocated).
 int erase(hashtable *ht, keyType key)
 {
-    (void)ht;
-    (void)key;
+    int slot = hash(ht, key);
+    node *last_node = ht->array[slot];
+    node *current_node = ht->array[slot];
+
+    while (current_node)
+    {
+        if (current_node->key == key)
+        {
+            if (current_node == ht->array[slot])
+            {
+                ht->array[slot] = current_node->next;
+            }
+            else
+            {
+                node *ptr_to_free = current_node;
+                last_node->next = current_node->next;
+                current_node = current_node->next;
+                free(ptr_to_free);
+            }
+        }
+        else
+        {
+            current_node = current_node->next;
+        }
+    }
     return 0;
 }
 

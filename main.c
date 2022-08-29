@@ -39,9 +39,13 @@ int main(void)
   {
     printf("value of %d is %d \n", i, values[i]);
   }
-  free(values);
+  // free(values);
 
   erase(ht, 0);
+
+  res = get(ht, key, values, num_values, num_results);
+  printf("After erasing get result: %d, num_results %p %d\n", res, num_results, *num_results);
+  free(values);
 
   deallocate(ht);
   (void)ht;
